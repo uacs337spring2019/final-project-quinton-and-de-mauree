@@ -2,15 +2,17 @@
 <html>
 <head>
 	<title> Movie & Actor Reviews </title>
+	<link href="finalproject.css" type="text/css" rel="stylesheet" />
 	<script src="finalproject.js"></script>
 </head>
 <body>
 	<div id = "topbar">
+		<span>Movie & Actor Reviews</span>
 	</div>
 	<div id = "contentbg">
 		<div id = "content">
 			<!-- Use content div for HTML injections for actor/movie information and comments -->
-			<h1 id="h1"> Everybody's a Critic </h1>
+			<span id="h1"> E v e r y b o d y ' s <br/><br/>a<br/><br/> C r i t i c </span>
 
 			<p id="p">Search for a Movie or Actor to see information and public critiques, or leave a review yourself!</p>
 
@@ -24,7 +26,7 @@
 				<input type="radio" name="select" value="movie" checked> Movie
 				<input type="radio" name="select" value="actor"> Actor
 			</fieldset>
-			<fieldset>
+			<fieldset id = "leavecomment">
 				<legend> Leave a comment </legend>
 				<input type="text" size = 20 id = "commenter" placeholder="Name" />
 				<input type="text" size = 20 id = "comment" placeholder="Comment" />
