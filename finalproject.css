@@ -45,10 +45,29 @@ fieldset {
 	width: 650px;
 	margin: auto;
 	margin-top: 50px;
+	margin-bottom: 100px;
 	background-color: #383838;
 	border-radius: 20px;
 	color: white;
 	padding: 20px;
+	padding-top: 40px;
 	text-align: center;
 	box-shadow: 10px 10px 3px gray;
+}
+
+#comment_box {
+	text-align: left;
+	font-family: Verdana;
+	font-size: 18pt;
+}
+
+tr:nth-child(odd) {
+	background: #2B2725;
+}
+
+table {
+	width: 80%;
+	margin-left: auto;
+	margin-right: auto;
+	font-family: Verdana;
 }

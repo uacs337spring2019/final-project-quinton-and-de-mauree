@@ -7,6 +7,8 @@
 	};
 
 	function movieOrActor () {
+		document.getElementById("success").innerHTML = "";
+		document.getElementById("comment_box").innerHTML = "";
 		let radios = document.getElementsByName("select");
 		let value = "";
 		for (let i = 0; i < radios.length; i++) {
@@ -29,29 +31,38 @@
 			let messages = json.messages;
 			let commentBox = document.getElementById("comment_box");
 			commentBox.innerHTML = "";
-			document.getElementById("success").innerHTML = "";
 			for (let i = 0; i < messages.length; i++) {
 				//parses messages in message.txt
 				//writes to html	
 				let message = messages[i];
-				let name = document.createElement("p");
-				let comment = document.createElement("p");
-				name.innerHTML = message.name + ":";
-				comment.innerHTML = message.comment;
-				let commentName = document.createElement("div");
-				let commentMessage = document.createElement("div");
-				commentName.appendChild(name);
-				commentMessage.appendChild(comment);
-				commentBox.appendChild(commentName);
-				commentBox.appendChild(commentMessage);
+
+				let comment1 = document.createElement("div");
+				let comment2 = document.createElement("div");
+				comment1.innerHTML = message.name + ":";
+				comment2.innerHTML = message.comment;
+				comment1.style.marginBottom = "10px";
+				comment1.style.marginLeft = "5px";
+				comment1.style.marginRight = "5px";
+				comment2.style.marginBottom = "20px";
+				comment2.style.marginLeft = "15px";
+				comment1.style.marginRight = "5px";
+				comment2.style.fontStyle = "italic";
+				comment2.style.fontSize = "14pt";
+
+				let comment = document.createElement("div");
+				comment.appendChild(comment1);
+				comment.appendChild(comment2);
+				comment.style.marginLeft = "50px";
+				comment.style.marginRight = "50px";
+				comment.style.borderRadius = "20px";
+				comment.style.padding = "10px";
+				if (i % 2 == 0){
+					comment.style.backgroundColor = "#2B2725";
+				}
+				commentBox.appendChild(comment);
 			}
 			});
-			//sends error message
-			// .catch(function(error) {
-			// 	console.log(error);
-			// });
 	}
-	//if user wants movies with kevin bacon only
 	function send () {
 		let userName = document.getElementById("commenter").value;
 		let userMessage = document.getElementById("comment").value;
@@ -71,12 +82,10 @@
 			.then(checkStatus)
 			.then(function(responseText) {
 				//adds success message to html page
-				document.getElementById("success").innerHTML += responseText;
+				document.getElementById("success").style.color = "#46CC71";
+				document.getElementById("success").innerHTML = responseText;
+				loadMessages();
 			});
-			//sends error message
-			// .catch(function(error) {
-			// 	console.log(error);
-			// });
 		document.getElementById("comment").value = "";
 		document.getElementById("commenter").value = "";
 
@@ -87,83 +96,92 @@
 		if (movieName != "") {
 			let name = movieName.replace(" ", "_");
 			url = "http://localhost:3000/?name="+name+"&mode=movie";
-			//creates txtfile 
-			send(url);
 			//checks database
 			fetch(url)
 			.then(checkStatus)
 			.then(function(responseText) {
-				//includes all movies in a table in descending order of the year
-				let content = document.getElementById("content");
-				let h1 = document.getElementById("h1");
-				let p = document.getElementById("p");
-				let table = document.getElementById("table");
-				// let img = document.getElementById("img");
-				h1.innerHTML = "";
-				p.innerHTML = "";
-				table.innerHTML = "";
-				// img.src = "";
-				table.innerHTML = "";
-				h1.innerHTML = "Results for " + movieName;
-				p.innerHTML = "Actors in "+ movieName;
 				let json = JSON.parse(responseText);
 				let sql = json.sql
-				console.log(json);
-				let row1 = document.createElement("tr");
-				let column = document.createElement("td");
-				column.innerHTML = "#";
-				row1.appendChild(column);
-				let column2 = document.createElement("td");
-				column2.innerHTML = "First Name";
-				row1.appendChild(column2);
-				let column3 = document.createElement("td");
-				column3.innerHTML ="Last Name";
-				row1.appendChild(column3);
-				table.appendChild(row1);
-				for (let i = 0; i < sql.length; i++) {
-					let firstName = sql[i].first_name;
-					let lastName = sql[i].last_name;
-					let row = document.createElement("tr");
+				if (sql.length == 0)
+				{
+					let p = document.getElementById("errormsg");
+					p.style.fontFamily = "Verdana";
+					p.style.color = "#CE3A3A";
+					p.innerHTML = "<br/>Movie not recognized, please try again!";
+					if (document.getElementById("table").innerHTML != "")
+					{
+						document.getElementById("h1").innerHTML = "";
+						document.getElementById("p").innerHTML = "";
+						document.getElementById("table").innerHTML = "";
+					}
+				}
+				else {
+					//includes all movies in a table in descending order of the year
+					//creates txtfile
+					send(url);
+					document.getElementById("leavecomment").style.visibility = "visible";
+					document.getElementById("errormsg").innerHTML = "";
+					let content = document.getElementById("content");
+					let h1 = document.getElementById("h1");
+					let p = document.getElementById("p");
+					let table = document.getElementById("table");
+					h1.innerHTML = "";
+					p.innerHTML = "";
+					table.innerHTML = "";
+					table.innerHTML = "";
+					h1.innerHTML = "Results for " + movieName;
+					p.innerHTML = "Actors in "+ movieName;
+					console.log(json);
+					let row1 = document.createElement("tr");
 					let column = document.createElement("td");
-					column.innerHTML = i+1;
-					row.appendChild(column);
+					column.innerHTML = "#";
+					row1.appendChild(column);
 					let column2 = document.createElement("td");
-					column2.innerHTML = firstName;
-					row.appendChild(column2);
+					column2.innerHTML = "First Name";
+					row1.appendChild(column2);
 					let column3 = document.createElement("td");
-					column3.innerHTML = lastName;
-					row.appendChild(column3);
-					table.appendChild(row);
-				}
-				content.appendChild(table);
+					column3.innerHTML ="Last Name";
+					row1.appendChild(column3);
+					table.appendChild(row1);
+					for (let i = 0; i < sql.length; i++) {
+						let firstName = sql[i].first_name;
+						let lastName = sql[i].last_name;
+						let row = document.createElement("tr");
+						let column = document.createElement("td");
+						column.innerHTML = i+1;
+						row.appendChild(column);
+						let column2 = document.createElement("td");
+						column2.innerHTML = firstName;
+						row.appendChild(column2);
+						let column3 = document.createElement("td");
+						column3.innerHTML = lastName;
+						row.appendChild(column3);
+						table.appendChild(row);
+					}
+					content.appendChild(table);
 
-				// let json = JSON.parse(responseText);
-				let messages = json.messages;
-				let commentBox = document.getElementById("comment_box");
-				commentBox.innerHTML = "";
-				document.getElementById("success").innerHTML = "";
-				for (let i = 0; i < messages.length; i++) {
-					//parses messages in message.txt
-					//writes to html	
-					let message = messages[i];
-					let name = document.createElement("p");
-					let comment = document.createElement("p");
-					name.innerHTML = message.name + ":";
-					comment.innerHTML = message.comment;
-					let commentName = document.createElement("div");
-					let commentMessage = document.createElement("div");
-					commentName.appendChild(name);
-					commentMessage.appendChild(comment);
-					commentBox.appendChild(commentName);
-					commentBox.appendChild(commentMessage);
+					// let json = JSON.parse(responseText);
+					let messages = json.messages;
+					let commentBox = document.getElementById("comment_box");
+					commentBox.innerHTML = "";
+					for (let i = 0; i < messages.length; i++) {
+						//parses messages in message.txt
+						//writes to html	
+						let message = messages[i];
+						let name = document.createElement("p");
+						let comment = document.createElement("p");
+						name.innerHTML = message.name + ":";
+						comment.innerHTML = message.comment;
+						let commentName = document.createElement("div");
+						let commentMessage = document.createElement("div");
+						commentName.appendChild(name);
+						commentMessage.appendChild(comment);
+						commentBox.appendChild(commentName);
+						commentBox.appendChild(commentMessage);
+					}
+					document.getElementById("insert_comment").onclick = send;
 				}
-				document.getElementById("insert_comment").onclick = send;
 			});
-	
-			// .catch(function(error){
-			// 	console.log(error);
-			// });
-			//sends error message
 		}
 		else {
 			alert("Input movie name into textbox.");
@@ -175,82 +193,93 @@
 		if (actorName != "") {
 			let name = actorName.replace(" ", "_");
 			url = "http://localhost:3000/?name="+name+"&mode=actor";
-			//creates txtfile
-			send(url);
 			console.log(url);
 			//checks database
 			fetch(url)
 			.then(checkStatus)
 			.then(function(responseText) {
-				//adds all movies with kevin bacon in a table in descending years
-				let content = document.getElementById("content");
-				let h1 = document.getElementById("h1");
-				let p = document.getElementById("p");
-				let table = document.getElementById("table");
-				//let img = document.getElementById("img");
-				h1.innerHTML = "";
-				p.innerHTML = "";
-				table.innerHTML = "";
-				//img.src = "";
-				let row1 = document.createElement("tr");
-				let column = document.createElement("td");
-				column.innerHTML = "#";
-				row1.appendChild(column);
-				let column2 = document.createElement("td");
-				column2.innerHTML = "Movie";
-				row1.appendChild(column2);
-				let column3 = document.createElement("td");
-				column3.innerHTML ="Year";
-				row1.appendChild(column3);
-				table.appendChild(row1);
-				h1.innerHTML = "Results for " + actorName;
-				p.innerHTML = "Films with "+ actorName;
 				let json = JSON.parse(responseText);
 				let sql = json.sql;
-				console.log(h1,p);
-				for (let i = 0; i < sql.length; i++) {
-					let movieName = sql[i].name;
-					let year = sql[i].year;
-					let row = document.createElement("tr");
+				if (sql.length == 0)
+				{
+					let p = document.getElementById("errormsg");
+					p.style.fontFamily = "Verdana";
+					p.style.color = "#CE3A3A";
+					p.innerHTML = "<br/>Actor not recognized, please try again!";
+					if (document.getElementById("table").innerHTML != "")
+					{
+						document.getElementById("h1").innerHTML = "";
+						document.getElementById("p").innerHTML = "";
+						document.getElementById("table").innerHTML = "";
+					}
+				}
+				else {
+					//creates txtfile
+					send(url);
+					document.getElementById("leavecomment").style.visibility = "visible";
+					document.getElementById("errormsg").innerHTML = "";
+					let content = document.getElementById("content");
+					let h1 = document.getElementById("h1");
+					let p = document.getElementById("p");
+					let table = document.getElementById("table");
+					//let img = document.getElementById("img");
+					h1.innerHTML = "";
+					p.innerHTML = "";
+					table.innerHTML = "";
+					//img.src = "";
+					let row1 = document.createElement("tr");
 					let column = document.createElement("td");
-					column.innerHTML = i+1;
-					row.appendChild(column);
+					column.innerHTML = "#";
+					row1.appendChild(column);
 					let column2 = document.createElement("td");
-					column2.innerHTML = movieName;
-					row.appendChild(column2);
+					column2.innerHTML = "Movie";
+					row1.appendChild(column2);
 					let column3 = document.createElement("td");
-					column3.innerHTML = year;
-					row.appendChild(column3);
-					table.appendChild(row);
-				}
-				content.appendChild(table);
+					column3.innerHTML ="Year";
+					row1.appendChild(column3);
+					table.appendChild(row1);
+					h1.innerHTML = "Results for " + actorName;
+					p.innerHTML = "Films with "+ actorName;
+					console.log(h1,p);
+					for (let i = 0; i < sql.length; i++) {
+						let movieName = sql[i].name;
+						let year = sql[i].year;
+						let row = document.createElement("tr");
+						let column = document.createElement("td");
+						column.innerHTML = i+1;
+						row.appendChild(column);
+						let column2 = document.createElement("td");
+						column2.innerHTML = movieName;
+						row.appendChild(column2);
+						let column3 = document.createElement("td");
+						column3.innerHTML = year;
+						row.appendChild(column3);
+						table.appendChild(row);
+					}
+					content.appendChild(table);
 
-				let messages = json.messages;
-				let commentBox = document.getElementById("comment_box");
-				commentBox.innerHTML = "";
-				document.getElementById("success").innerHTML = "";
-				for (let i = 0; i < messages.length; i++) {
-					//parses messages in message.txt
-					//writes to html	
-					let message = messages[i];
-					let name = document.createElement("p");
-					let comment = document.createElement("p");
-					name.innerHTML = message.name + ":";
-					comment.innerHTML = message.comment;
-					let commentName = document.createElement("div");
-					let commentMessage = document.createElement("div");
-					commentName.appendChild(name);
-					commentMessage.appendChild(comment);
-					commentBox.appendChild(commentName);
-					commentBox.appendChild(commentMessage);
+					let messages = json.messages;
+					let commentBox = document.getElementById("comment_box");
+					commentBox.innerHTML = "";
+					document.getElementById("success").innerHTML = "";
+					for (let i = 0; i < messages.length; i++) {
+						//parses messages in message.txt
+						//writes to html	
+						let message = messages[i];
+						let name = document.createElement("p");
+						let comment = document.createElement("p");
+						name.innerHTML = message.name + ":";
+						comment.innerHTML = message.comment;
+						let commentName = document.createElement("div");
+						let commentMessage = document.createElement("div");
+						commentName.appendChild(name);
+						commentMessage.appendChild(comment);
+						commentBox.appendChild(commentName);
+						commentBox.appendChild(commentMessage);
+					}
+					document.getElementById("insert_comment").onclick = send;
 				}
-				document.getElementById("insert_comment").onclick = send;
 			});
-
-			// .catch(function(error){
-			// 	console.log(error);
-			// });
-			//sends error message
 		}
 		//if no name entered
 		else {
