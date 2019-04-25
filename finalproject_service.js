@@ -43,6 +43,7 @@ app.post('/', jsonParser, function (req, res) {
 	}
 	//writes name and comment with ":::" in between, followed by new line
 	if (write) {
+		console.log("file created");
 		fs.appendFile(fileName+".txt", userName+":::"+userMessage+"\n", function(err) {
 			//send error message
 	    	if(err) {
@@ -62,7 +63,6 @@ app.post('/', jsonParser, function (req, res) {
 				res.status(400);
 	    	}
 	    	//send nothing if commentor name or comment missing
-	    	console.log("The file was saved!");
 	    	res.send("");
 	    });
 	}
@@ -95,32 +95,27 @@ app.get('/', function (req, res) {
 		let actorName = name.split("_");
 		let firstName = actorName[0];
 		let lastName = actorName[1];
-		con.connect(function(err) {
-		if (err) throw err;
 		console.log("Connected!");
 		con.query("SELECT m.name, m.year FROM actors a JOIN roles r ON a.id = r.actor_id JOIN movies m ON m.id = r.movie_id WHERE a.first_name='"+firstName+"' AND a.last_name = '"+lastName+"' ORDER BY m.year DESC;", 
-		                function (err, result, fields) {
-							if (err) throw err;
-							//database info
-							json.sql = result;
-							res.send(json);
-						});
-		});
+            function (err, result, fields) {
+				if (err) throw err;
+				//database info
+				json.sql = result;
+				res.send(json);
+			});
 	}
 	//user wants all actors in a movie
 	else if (mode === "movie"){
 		let movieName = name.replace("_", " ");
-		con.connect(function(err) {
-		if (err) throw err;
 		console.log("Connected!");
 		con.query("SELECT DISTINCT a.first_name, a.last_name FROM actors a JOIN roles r ON a.id = r.actor_id JOIN movies m ON m.id = r.movie_id WHERE m.name = '"+movieName+"' ORDER BY a.last_name, a.first_name;", 
-		                function (err, result, fields) {
-							if (err) throw err;
-							//database info
-							json.sql = result;
-							res.send(json);
-						});
-		});
+            function (err, result, fields) {
+				if (err) throw err;
+				//database info
+				json.sql = result;
+				res.send(json);
+			});
 	}
 });
+
 app.listen(3000);
