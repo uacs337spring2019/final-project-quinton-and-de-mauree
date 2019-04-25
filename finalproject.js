@@ -93,7 +93,7 @@
 		let movieName = document.getElementById("name").value;
 		if (movieName != "") {
 			let name = movieName.replace(" ", "_");
-			url = "https://movieandactorreviews.herokuapp.com/?name="+name+"&mode=movie";
+			url = "https://movieandactorreviews.herokuapp.com:process.env.PORT/?name="+name+"&mode=movie";
 			send();
 			//checks database
 			fetch(url)
@@ -187,7 +187,7 @@
 		let actorName = document.getElementById("name").value;
 		if (actorName != "") {
 			let name = actorName.replace(" ", "_");
-			url = "https://movieandactorreviews.herokuapp.com/?name="+name+"&mode=actor";
+			url = "https://movieandactorreviews.herokuapp.com:process.env.PORT/?name="+name+"&mode=actor";
 			send();
 			//checks database
 			fetch(url)
