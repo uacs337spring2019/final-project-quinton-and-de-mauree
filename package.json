@@ -2,7 +2,7 @@
   "name": "final-project-quinton-and-de-mauree-final-update",
   "version": "1.0.0",
   "description": "",
-  "main": "finalproject.js",
+  "main": "finalproject_service.js",
   "dependencies": {
     "body-parser": "^1.18.3",
     "express": "^4.16.4",
